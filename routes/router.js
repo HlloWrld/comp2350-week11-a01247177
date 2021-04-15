@@ -1,5 +1,8 @@
 const router = require('express').Router();
+
 const database = include('databaseConnection');
+
+
 //const dbModel = include('databaseAccessLayer');
 //const dbModel = include('staticData');
 
@@ -122,17 +125,17 @@ router.get('/deleteUser', async (req, res) => {
 			console.log("deleteUser: ");
 			console.log(deleteUser);
 			if (deleteUser !== null) {
-				await userCollection.deleteOne({
+					await userCollection.deleteOne({
 
-					first_name: req.body.first_name,
-					last_name: req.body.last_name,
-					email: req.body.email,
-	
-					password_salt: password_salt.digest("hex"),
-					password_hash: password_hash.digest("hex"),
-	
-				}
-			);
+						first_name: req.body.first_name,
+						last_name: req.body.last_name,
+						email: req.body.email,
+		
+						password_salt: password_salt.digest("hex"),
+						password_hash: password_hash.digest("hex"),
+		
+					}
+				);
 			}
 		}
 		res.redirect("/");
@@ -151,7 +154,7 @@ router.post('/addUser', async (req, res) => {
 	if (validationResult.error != null) {
 		 console.log(validationResult.error);
 	 throw validationResult.error;
-}
+	}
 	try {
 
 		console.log("form submit");
@@ -187,6 +190,8 @@ router.post('/addUser', async (req, res) => {
 		console.log(ex);	
 	}
 });
+
+module.exports = router;
 
 /*
 router.get('/', (req, res) => {
@@ -288,4 +293,4 @@ router.get('/deleteUser', (req, res) => {
 });
 */
 
-module.exports = router;
+
