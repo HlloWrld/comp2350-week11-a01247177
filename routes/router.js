@@ -55,7 +55,14 @@ router.get('/pets', async (req, res) => {
 
 
 router.get('/showPets', async (req, res) => {
+
+
 	console.log("page hit");
+
+	const ObjectId = require('mongodb').ObjectId;
+	const petCollection = database.db('lab_example').collection(pets);
+	const pets = await petCollection.find({"_id":ObjectId("606e98ba4526b5d688a88c0f")})
+
 	try {
 		let userId = req.query.id;
 		const user = await userModel.findByPk(userId); 
@@ -125,8 +132,8 @@ router.get('/deleteUser', async (req, res) => {
 		res.redirect("/");
 	}
 	catch(ex) {
-		res.render('error', {message: 'Error connecting to MySQL'});
-		console.log("Error connecting to MySQL");
+		res.render('error', {message: 'Error connecting to MongoDB'});
+		console.log("Error connecting to MongoDB");
 		console.log(ex);	
 	}
 });
