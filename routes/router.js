@@ -2,6 +2,8 @@ const router = require('express').Router();
 
 const database = include('databaseConnection');
 
+const mongodb = require('mongodb');
+
 
 //const dbModel = include('databaseAccessLayer');
 //const dbModel = include('staticData');
@@ -26,7 +28,7 @@ router.get('/', async (req, res) => {
 		const userCollection = database.db('lab_example').collection('users');
 		const users = await userCollection.find().project({first_name: 1, last_name: 1, email:1, _id: 1}).toArray();
 		if (users === null) {
-			res.render('error', {message: 'Error connecting to MySQL'});
+			res.render('error', {message: 'Error connecting to MongoDB'});
 			console.log("Error connecting to userModel");
 		}
 		else {
@@ -35,8 +37,8 @@ router.get('/', async (req, res) => {
 		}
 	}
 	catch(ex) {
-		res.render('error', {message: 'Error connecting to MySQL'});
-		console.log("Error connecting to MySQL");
+		res.render('error', {message: 'Error connecting to MongoDB'});
+		console.log("Error connecting to MondgoDB");
 		console.log(ex);
 	}
 });
