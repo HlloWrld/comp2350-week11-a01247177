@@ -9,11 +9,7 @@ const database = include('databaseConnection');
 
 const Joi = require("joi");
 const schema = Joi.string().max(10).required();
-const validationResult = schema.validate(req.query.id);
-if (validationResult.error != null) {
- console.log(validationResult.error);
- throw validationResult.error;
-}
+
 
 
 const crypto = require('crypto');
@@ -100,6 +96,13 @@ router.get('/deleteUser', async (req, res) => {
 	try {
 		console.log("delete user");
 
+
+		const validationResult = schema.validate(req.query.id);
+			if (validationResult.error != null) {
+ 				console.log(validationResult.error);
+ 			throw validationResult.error;
+		}
+
 		const userCollection = database.db("lab_example").collection("users");
 
 		// db.collection.deleteOne(
@@ -142,6 +145,13 @@ router.get('/deleteUser', async (req, res) => {
 });
 
 router.post('/addUser', async (req, res) => {
+
+
+	const validationResult = schema.validate(req.query.id);
+	if (validationResult.error != null) {
+		 console.log(validationResult.error);
+	 throw validationResult.error;
+}
 	try {
 
 		console.log("form submit");
