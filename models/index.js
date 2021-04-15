@@ -1,37 +1,41 @@
-'use strict';
-
-const fs = require('fs');
-const path = require('path');
-const Sequelize = require('sequelize');
-const basename = path.basename(__filename);
-const env = process.env.NODE_ENV || 'development';
-const config = require(__dirname + '/../config/config.json')[env];
-const db = {};
-
-let sequelize;
-if (config.use_env_variable) {
-  sequelize = new Sequelize(process.env[config.use_env_variable], config);
-} else {
-  sequelize = new Sequelize(config.database, config.username, config.password, config);
+//Define the include function for absolute file name
+global.base_dir = __dirname;
+global.abs_path = function(path) {
+	return base_dir + path;
+}
+global.include = function(file) {
+	return require(abs_path('/' + file));
 }
 
-fs
-  .readdirSync(__dirname)
-  .filter(file => {
-    return (file.indexOf('.') !== 0) && (file !== basename) && (file.slice(-3) === '.js');
-  })
-  .forEach(file => {
-    const model = require(path.join(__dirname, file))(sequelize, Sequelize.DataTypes);
-    db[model.name] = model;
-  });
 
-Object.keys(db).forEach(modelName => {
-  if (db[modelName].associate) {
-    db[modelName].associate(db);
-  }
+
+const express = require('express');
+const database = include('databaseConnection');
+const router = include('routes/router');
+
+const port = process.env.PORT || 3000;
+
+database.connect((err, dbConnection) => {
+	if (!err) {
+		console.log("Successfully connected to MongoDB");
+	}
+	else {
+		console.log("Error Connecting to MongoDB");
+		console.log(err);
+	}
 });
 
-db.sequelize = sequelize;
-db.Sequelize = Sequelize;
 
-module.exports = db;
+const app = express();
+app.set('view engine', 'ejs');
+
+app.use(express.urlencoded({extended: false}));
+app.use(express.static(__dirname + "/public"));
+app.use('/',router);
+
+app.listen(port, () => {
+	console.log("Node application listening on port "+port);
+}); 
+
+
+

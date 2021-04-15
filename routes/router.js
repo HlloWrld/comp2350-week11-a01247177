@@ -6,6 +6,15 @@ const database = include('databaseConnection');
 // const userModel = include('models/web_user');
 // const petModel = include('models/pet');
 
+const Joi = require("joi");
+const schema = Joi.string().max(10).required();
+const validationResult = schema.validate(req.query.id);
+if (validationResult.error != null) {
+ console.log(validationResult.error);
+ throw validationResult.error;
+}
+
+
 const crypto = require('crypto');
 const {v4: uuid} = require('uuid');
 
@@ -100,13 +109,6 @@ router.get('/deleteUser', async (req, res) => {
 		// 	   hint: <document|string>        // Available starting in MongoDB 4.4
 		// 	}
 		//  )
-
-		const schema = Joi.string().max(10).required();
-		const validationResult = schema.validate(req.query.id);
-		if (validationResult.error != null) {
-		 console.log(validationResult.error);
-		 throw validationResult.error;
-		}
 		
 
 		let userId = database.db("lab_example").collection("users");
@@ -140,14 +142,6 @@ router.get('/deleteUser', async (req, res) => {
 
 router.post('/addUser', async (req, res) => {
 	try {
-
-		const schema = Joi.string().max(10).required();
-		const validationResult = schema.validate(req.query.id);
-		if (validationResult.error != null) {
-		console.log(validationResult.error);
-		throw validationResult.error;
-}
-
 
 		console.log("form submit");
 
