@@ -6,6 +6,9 @@ const database = include('databaseConnection');
 // const userModel = include('models/web_user');
 // const petModel = include('models/pet');
 
+const userCollection = database.db('lab_example').collection('users');
+const users = await userCollection.find().project({first_name: 1, last_name: 1, email:1, _id: 1}).toArray();
+
 const Joi = require("joi");
 const schema = Joi.string().max(10).required();
 const validationResult = schema.validate(req.query.id);
