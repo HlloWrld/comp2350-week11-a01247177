@@ -27,6 +27,7 @@ router.get('/', async (req, res) => {
 	console.log("page hit");
 	try {
 		const userCollection = database.db('lab_example').collection('users');
+		const userCollection = database.db('lab_example').collection('users');
 		const users = await userCollection.find().project({first_name: 1, last_name: 1, email:1, _id: 1}).toArray();
 		if (users === null) {
 			res.render('error', {message: 'Error connecting to MySQL'});
