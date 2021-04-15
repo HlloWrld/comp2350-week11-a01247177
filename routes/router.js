@@ -83,14 +83,43 @@ router.get('/deleteUser', async (req, res) => {
 	try {
 		console.log("delete user");
 
-		let userId = req.query.id;
+		const userCollection = database.db("lab_example").collection("users");
+
+		// db.collection.deleteOne(
+		// 	<filter>,
+		// 	{
+		// 	   writeConcern: <document>,
+		// 	   collation: <document>,
+		// 	   hint: <document|string>        // Available starting in MongoDB 4.4
+		// 	}
+		//  )
+
+		const schema = Joi.string().max(10).required();
+		const validationResult = schema.validate(req.query.id);
+		if (validationResult.error != null) {
+		 console.log(validationResult.error);
+		 throw validationResult.error;
+		}
+		
+
+		let userId = database.db("lab_example").collection("users");
 		if (userId) {
 			console.log("userId: "+userId);
 			let deleteUser = await userModel.findByPk(userId);
 			console.log("deleteUser: ");
 			console.log(deleteUser);
 			if (deleteUser !== null) {
-				await deleteUser.destroy();
+				await userCollection.deleteOne({
+
+					first_name: req.body.first_name,
+					last_name: req.body.last_name,
+					email: req.body.email,
+	
+					password_salt: password_salt.digest("hex"),
+					password_hash: password_hash.digest("hex"),
+	
+				}
+			);
 			}
 		}
 		res.redirect("/");
@@ -104,6 +133,15 @@ router.get('/deleteUser', async (req, res) => {
 
 router.post('/addUser', async (req, res) => {
 	try {
+
+		const schema = Joi.string().max(10).required();
+		const validationResult = schema.validate(req.query.id);
+		if (validationResult.error != null) {
+		console.log(validationResult.error);
+		throw validationResult.error;
+}
+
+
 		console.log("form submit");
 
 		const password_salt = crypto.createHash('sha512');
@@ -115,13 +153,17 @@ router.post('/addUser', async (req, res) => {
 		password_hash.update(req.body.password+passwordPepper+password_salt);
 
 
-		let newUser = userModel.build(
-			{	
+		const userCollection = database.db("lab_example").collection("users");
+
+			userCollection.insertOne({
+
 				first_name: req.body.first_name,
 				last_name: req.body.last_name,
 				email: req.body.email,
-				password_salt: password_salt.digest('hex'),
-				password_hash: password_hash.digest('hex')
+
+				password_salt: password_salt.digest("hex"),
+				password_hash: password_hash.digest("hex"),
+
 			}
 		);
 		await newUser.save();
